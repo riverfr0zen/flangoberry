@@ -1,0 +1,6 @@
+*.pyc
+*.coverage
+__pycache__
+.pytest_cache
+settings.py
+venv
