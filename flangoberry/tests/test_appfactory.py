@@ -10,5 +10,5 @@ def test_testapp_fixture(testapp):
 
 
 def test_testapp_index_route(testappcli):
-    res = testappcli.get("/")
-    assert res.data == b"Sure, he's a regular Davinci-man I bet."
+    res = testappcli.get("/flangoberry")
+    assert res.data == b"Drink flangoberry for flowery fluctuations"

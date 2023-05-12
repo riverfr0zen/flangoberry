@@ -28,10 +28,10 @@ def create_app(settings=settings, schema=schema, test_config=None):
     # Routes
     #
 
-    @app.route("/")
+    @app.route("/flangoberry")
     def info():
         """Basic info display"""
-        return "Sure, he's a regular Davinci-man I bet."
+        return "Drink flangoberry for flowery fluctuations"
 
     app.add_url_rule(
         "/graphql",

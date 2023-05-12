@@ -1,6 +1,6 @@
 import pytest
 from flangoberry import logger
-from flangoberry.graph_defs import Note, Topic, IsAbout, IsTypeOf
+from flangoberry.tests.graph_defs import Note, Topic, IsAbout, IsTypeOf
 from .. import simple_assoc_builder as builder
 
 

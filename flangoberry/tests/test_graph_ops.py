@@ -2,33 +2,16 @@ import pytest
 from flangoberry import logger
 from flangoberry.db import connections
 from datetime import datetime
+from .graph_defs import ExampleNode, ExamplePerson, ExampleEdge
 from .. import graph_ops
 from arango.database import StandardDatabase
 from arango.collection import VertexCollection, EdgeCollection
 from arango.graph import Graph
 
 
-class ExampleNode(graph_ops.BaseVertex):
-    default_storage = {
-        "connection_alias": "default",
-        "db_alias": "flangoberry",
-        "graph": "default",
-        "collection": "example_nodes",
-        "persistent_indexes": [
-            # Persistent index properties should match function signature here:
-            # https://docs.python-arango.com/en/main/specs.html#arango.collection.Collection.add_persistent_index
-            {"fields": ["attr2"], "unique": True, "sparse": True}
-        ],
-    }
-
-
-class ExamplePerson(graph_ops.BaseVertex):
-    default_storage = {
-        "connection_alias": "default",
-        "db_alias": "flangoberry",
-        "graph": "default",
-        "collection": "example_people",
-    }
+#
+# Vertices
+#
 
 
 def test_resolve_vertex_storage(tests_conn, cleanup):
@@ -154,17 +137,9 @@ def test_get_or_create_vertex(tests_conn, cleanup):
     assert db_result.count() == 1
 
 
-class ExampleEdge(graph_ops.BaseEdge):
-    default_storage = {
-        "connection_alias": "default",
-        "db_alias": "flangoberry",
-        "graph": "default",
-        "edge_definition": {
-            "edge_collection": "example_edges",
-            "from_vertex_collections": ["example_nodes"],
-            "to_vertex_collections": ["example_people"],
-        },
-    }
+#
+# Edges
+#
 
 
 def test_resolve_edge_storage(tests_conn, cleanup):

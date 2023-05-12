@@ -1,4 +1,5 @@
-from .. import graph_defs, graph_ops
+from . import graph_defs
+from .. import graph_ops
 from flangoberry import logger
 
 
