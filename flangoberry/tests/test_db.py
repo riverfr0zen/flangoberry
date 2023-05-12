@@ -1,5 +1,5 @@
 import pytest
-from flangoberry.settings import TEST_DBCONF
+from flangoberry.default_settings import TEST_DBCONF
 from flangoberry import db
 from arango import ArangoClient
 from arango.database import StandardDatabase

@@ -1,17 +1,18 @@
 from flask import Flask
 from strawberry.flask.views import GraphQLView
-from flangoberry import settings
 from flangoberry.graphql.schema import schema
 from flangoberry.db import get_connection
 
+# from flangoberry import settings
 
-def create_app(settings=settings, schema=schema, test_config=None):
+
+def create_app(settings_file="default_settings.py", schema=schema, test_config=None):
     #
     # App and config
     #
 
     app = Flask(__name__, instance_relative_config=False)
-    app.config.from_pyfile("settings.py")
+    app.config.from_pyfile(settings_file)
     if test_config:
         app.config.from_mapping(test_config)
 
@@ -19,9 +20,9 @@ def create_app(settings=settings, schema=schema, test_config=None):
     # Database
     #
 
-    dbsettings = settings.DBCONF
+    dbsettings = app.config["DBCONF"]
     if app.config["USE_TEST_DBCONF"]:
-        dbsettings = settings.TEST_DBCONF
+        dbsettings = app.config["TEST_DBCONF"]
     app.config["DBCONN"] = get_connection(dbsettings=dbsettings)
 
     #
@@ -38,7 +39,7 @@ def create_app(settings=settings, schema=schema, test_config=None):
         view_func=GraphQLView.as_view(
             "graphql",
             schema=schema,
-            graphiql=settings.SHOW_GRAPHIQL,
+            graphiql=app.config["SHOW_GRAPHIQL"],
         ),
     )
 

@@ -1,5 +1,5 @@
 import logging
-from flangoberry import settings
+from flangoberry import default_settings as settings
 
 
 __version__ = settings.VERSION
