@@ -1,6 +1,7 @@
 import strawberry
 from strawberry.types import Info
-from . import mutations as core_mutations
+
+# from . import mutations as core_mutations
 
 
 @strawberry.type
@@ -13,10 +14,12 @@ class Query:
         return f"Example field, {test_header}, {test_var}"
 
 
-@strawberry.type
-class Mutation:
-    get_or_create_note = core_mutations.get_or_create_note
-    get_or_create_bookmark = core_mutations.get_or_create_bookmark
+# @strawberry.type
+# class Mutation:
+#     get_or_create_note = core_mutations.get_or_create_note
+#     get_or_create_bookmark = core_mutations.get_or_create_bookmark
+#     pass
 
 
-schema = strawberry.Schema(query=Query, mutation=Mutation)
+# schema = strawberry.Schema(query=Query, mutation=Mutation)
+schema = strawberry.Schema(query=Query)
