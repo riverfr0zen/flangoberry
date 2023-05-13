@@ -109,7 +109,11 @@ LOG_LEVELS = {
 
 
 def set_default_db_alias(app_db_alias: str):
-    """Util to quick-configure a different default database than 'flangoberry'"""
+    """Util to quick-configure a different default database than 'flangoberry'.
+    For simplicity, this assumes you are only using one database. For more complex
+    setups, please review the structure of `flangoberry.default_settings.DBCONF` and
+    `flangoberry.default_settings.TEST_DBCONF` and configure manually."""
+
     if app_db_alias not in DBCONF["default"]["db_connect_conf"]:
         DBCONF["default"]["db_connect_conf"][app_db_alias] = DBCONF["default"][
             "db_connect_conf"
