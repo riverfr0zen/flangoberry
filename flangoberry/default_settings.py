@@ -40,7 +40,7 @@ DBCONF = {
         "db_connect_conf": {
             "flangoberry": {
                 "name": "flangoberry",
-                "username": "dev",
+                "username": "flangodev",
                 "password": "somepass",
                 "verify": True,
             }
@@ -79,7 +79,7 @@ TEST_DBCONF = {
         "db_connect_conf": {
             "flangoberry": {
                 "name": "flangoberry_test",
-                "username": "dev",
+                "username": "flangodev",
                 "password": "somepass",
                 "verify": True,
             }
@@ -108,24 +108,26 @@ LOG_LEVELS = {
 #
 
 
-def set_default_db_alias(app_db_alias: str):
+def set_default_db_alias(name: str, username: str, password: str):
     """Util to quick-configure a different default database than 'flangoberry'.
     For simplicity, this assumes you are only using one database. For more complex
     setups, please review the structure of `flangoberry.default_settings.DBCONF` and
     `flangoberry.default_settings.TEST_DBCONF` and configure manually."""
 
-    if app_db_alias not in DBCONF["default"]["db_connect_conf"]:
-        DBCONF["default"]["db_connect_conf"][app_db_alias] = DBCONF["default"][
+    if name not in DBCONF["default"]["db_connect_conf"]:
+        DBCONF["default"]["db_connect_conf"][name] = DBCONF["default"][
             "db_connect_conf"
         ].pop("flangoberry")
-        DBCONF["default"]["db_connect_conf"][app_db_alias]["name"] = app_db_alias
-        # print(DBCONF["default"]["db_connect_conf"][app_db_alias])
+        DBCONF["default"]["db_connect_conf"][name]["name"] = name
+        DBCONF["default"]["db_connect_conf"][name]["username"] = username
+        DBCONF["default"]["db_connect_conf"][name]["password"] = password
+        # print(DBCONF["default"]["db_connect_conf"][name])
 
-    if app_db_alias not in TEST_DBCONF["default"]["db_connect_conf"]:
-        TEST_DBCONF["default"]["db_connect_conf"][app_db_alias] = TEST_DBCONF[
-            "default"
-        ]["db_connect_conf"].pop("flangoberry")
-        TEST_DBCONF["default"]["db_connect_conf"][app_db_alias][
-            "name"
-        ] = f"{app_db_alias}_test"
-        # print(TEST_DBCONF["default"]["db_connect_conf"][app_db_alias])
+    if name not in TEST_DBCONF["default"]["db_connect_conf"]:
+        TEST_DBCONF["default"]["db_connect_conf"][name] = TEST_DBCONF["default"][
+            "db_connect_conf"
+        ].pop("flangoberry")
+        TEST_DBCONF["default"]["db_connect_conf"][name]["name"] = f"{name}_test"
+        TEST_DBCONF["default"]["db_connect_conf"][name]["username"] = username
+        TEST_DBCONF["default"]["db_connect_conf"][name]["password"] = password
+        # print(TEST_DBCONF["default"]["db_connect_conf"][name])
