@@ -91,6 +91,7 @@ TEST_DBCONF = {
 #
 # Logging
 #
+
 LOG_LEVELS = {
     "flangoberry": logging.DEBUG,
     "passlib": logging.WARN,
@@ -100,3 +101,27 @@ LOG_LEVELS = {
     "urllib3": logging.WARN,
     "twilio.http_client": logging.WARN,
 }
+
+
+#
+# Settings utils
+#
+
+
+def set_default_db_alias(app_db_alias: str):
+    """Util to quick-configure a different default database than 'flangoberry'"""
+    if app_db_alias not in DBCONF["default"]["db_connect_conf"]:
+        DBCONF["default"]["db_connect_conf"][app_db_alias] = DBCONF["default"][
+            "db_connect_conf"
+        ].pop("flangoberry")
+        DBCONF["default"]["db_connect_conf"][app_db_alias]["name"] = app_db_alias
+        print(DBCONF["default"]["db_connect_conf"][app_db_alias])
+
+    if app_db_alias not in TEST_DBCONF["default"]["db_connect_conf"]:
+        TEST_DBCONF["default"]["db_connect_conf"][app_db_alias] = TEST_DBCONF[
+            "default"
+        ]["db_connect_conf"].pop("flangoberry")
+        TEST_DBCONF["default"]["db_connect_conf"][app_db_alias][
+            "name"
+        ] = "davinciman_test"
+        print(TEST_DBCONF["default"]["db_connect_conf"][app_db_alias])
