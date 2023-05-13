@@ -1,6 +1,6 @@
 from flask import Flask
 from strawberry.flask.views import GraphQLView
-from flangoberry.graphql.schema import schema
+from flangoberry.tests.schema import schema
 from flangoberry.db import get_connection
 
 # from flangoberry import settings
