@@ -119,7 +119,7 @@ def set_default_db_alias(app_db_alias: str):
             "db_connect_conf"
         ].pop("flangoberry")
         DBCONF["default"]["db_connect_conf"][app_db_alias]["name"] = app_db_alias
-        print(DBCONF["default"]["db_connect_conf"][app_db_alias])
+        # print(DBCONF["default"]["db_connect_conf"][app_db_alias])
 
     if app_db_alias not in TEST_DBCONF["default"]["db_connect_conf"]:
         TEST_DBCONF["default"]["db_connect_conf"][app_db_alias] = TEST_DBCONF[
@@ -127,5 +127,5 @@ def set_default_db_alias(app_db_alias: str):
         ]["db_connect_conf"].pop("flangoberry")
         TEST_DBCONF["default"]["db_connect_conf"][app_db_alias][
             "name"
-        ] = "davinciman_test"
-        print(TEST_DBCONF["default"]["db_connect_conf"][app_db_alias])
+        ] = f"{app_db_alias}_test"
+        # print(TEST_DBCONF["default"]["db_connect_conf"][app_db_alias])
