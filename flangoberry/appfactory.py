@@ -7,6 +7,9 @@ from flangoberry.db import get_connection
 
 
 def create_app(settings_file="default_settings.py", schema=schema, test_config=None):
+    """Utility to create and preconfigure Flask app. If schema is not provided,
+    `flangoberry.tests.schema` will be used."""
+
     #
     # App and config
     #
