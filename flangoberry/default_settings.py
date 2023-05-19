@@ -114,20 +114,18 @@ def set_default_db_alias(name: str, username: str, password: str):
     setups, please review the structure of `flangoberry.default_settings.DBCONF` and
     `flangoberry.default_settings.TEST_DBCONF` and configure manually."""
 
-    if name not in DBCONF["default"]["db_connect_conf"]:
-        DBCONF["default"]["db_connect_conf"][name] = DBCONF["default"][
-            "db_connect_conf"
-        ].pop("flangoberry")
-        DBCONF["default"]["db_connect_conf"][name]["name"] = name
-        DBCONF["default"]["db_connect_conf"][name]["username"] = username
-        DBCONF["default"]["db_connect_conf"][name]["password"] = password
-        # print(DBCONF["default"]["db_connect_conf"][name])
+    DBCONF["default"]["db_connect_conf"][name] = DBCONF["default"]["db_connect_conf"][
+        "flangoberry"
+    ]
+    DBCONF["default"]["db_connect_conf"][name]["name"] = name
+    DBCONF["default"]["db_connect_conf"][name]["username"] = username
+    DBCONF["default"]["db_connect_conf"][name]["password"] = password
+    # print(DBCONF["default"]["db_connect_conf"][name])
 
-    if name not in TEST_DBCONF["default"]["db_connect_conf"]:
-        TEST_DBCONF["default"]["db_connect_conf"][name] = TEST_DBCONF["default"][
-            "db_connect_conf"
-        ].pop("flangoberry")
-        TEST_DBCONF["default"]["db_connect_conf"][name]["name"] = f"{name}_test"
-        TEST_DBCONF["default"]["db_connect_conf"][name]["username"] = username
-        TEST_DBCONF["default"]["db_connect_conf"][name]["password"] = password
-        # print(TEST_DBCONF["default"]["db_connect_conf"][name])
+    TEST_DBCONF["default"]["db_connect_conf"][name] = TEST_DBCONF["default"][
+        "db_connect_conf"
+    ]["flangoberry"]
+    TEST_DBCONF["default"]["db_connect_conf"][name]["name"] = f"{name}_test"
+    TEST_DBCONF["default"]["db_connect_conf"][name]["username"] = username
+    TEST_DBCONF["default"]["db_connect_conf"][name]["password"] = password
+    # print(TEST_DBCONF["default"]["db_connect_conf"][name])
