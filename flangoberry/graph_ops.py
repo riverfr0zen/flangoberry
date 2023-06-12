@@ -57,6 +57,12 @@ def resolve_edge_storage(edge: BaseEdge | type[BaseEdge], storage_def=None):
         coll = graph.edge_collection(edge_def["edge_collection"])
     else:
         coll = graph.create_edge_definition(**edge_def)
+
+    if persistent_indexes := storage_def.get("persistent_indexes", None):
+        for p_index in persistent_indexes:
+            p_index["in_background"] = True
+            coll.add_persistent_index(**p_index)
+
     return EdgeStorage(dbase, graph, coll)
 
 

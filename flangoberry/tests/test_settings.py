@@ -15,12 +15,13 @@ def test_set_default_db_alias():
     default_settings.set_default_db_alias(
         name="new_db", username="newdev", password="newpass"
     )
-    assert "flangoberry" not in default_conf
+    # No longer removing the flangoberry entry
+    # assert "flangoberry" not in default_conf
     assert "new_db" in default_conf
     assert default_conf["new_db"]["name"] == "new_db"
     assert default_conf["new_db"]["username"] == "newdev"
     assert default_conf["new_db"]["password"] == "newpass"
-    assert "flangoberry" not in test_conf
+    # assert "flangoberry" not in test_conf
     assert "new_db" in test_conf
     assert test_conf["new_db"]["name"] == "new_db_test"
     assert test_conf["new_db"]["username"] == "newdev"
