@@ -10,7 +10,7 @@ license = "MIT"
 python = "^3.11.2"
 python-arango = "^7.5.7"
 Flask = "^2.3.2"
-strawberry-graphql = "^0.177.1"
+strawberry-graphql = "0.183.7"
 
 
 [tool.poetry.group.dev.dependencies]
