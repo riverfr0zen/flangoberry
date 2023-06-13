@@ -167,9 +167,33 @@ def get_or_create_edge(
     return False, create_edge(edge_def(**search), storage_def)
 
 
+import strawberry
+from datetime import datetime
+from flangoberry.graphql.types import BaseVertexFieldsMixin
+from typing import Optional, get_type_hints
+
+
+def to_py_date(iso_date) -> datetime:
+    return datetime.fromisoformat(iso_date)
+
+
 def to_gql(data: dict) -> dict:
     """Converts the _key, _id, and _rev field names from the database to GQL-acceptable ones"""
-    return {
-        k.replace("_", "") if (k in ["_key", "_id", "_rev"]) else k: v
-        for k, v in data.items()
-    }
+    # This comprehension *may* be more performant (untested) but is kind of hard to read
+    # return {
+    #     k.replace("_", "")
+    #     if (k in ["_key", "_id", "_rev"])
+    #     else k: to_py_date(v)
+    #     if (k in ["created", "modified"])
+    #     else v
+    #     for k, v in data.items()
+    # }
+
+    converted_data = {}
+    for k, v in data.items():
+        if k in ["_key", "_id", "_rev"]:
+            k = k.replace("_", "")
+        if k in ["created", "modified"]:
+            v = to_py_date(v)
+        converted_data[k] = v
+    return converted_data

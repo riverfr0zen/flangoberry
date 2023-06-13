@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 
 
@@ -19,7 +19,7 @@ class BaseVertex(dict):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        now = datetime.utcnow().isoformat()
+        now = datetime.now(timezone.utc).isoformat()
         if "created" not in self:
             self["created"] = now
         if "modified" not in self:
@@ -45,7 +45,7 @@ class BaseEdge(dict):
             kwargs["_to"] = kwargs.pop("to")["_id"]
 
         super().__init__(**kwargs)
-        now = datetime.utcnow().isoformat()
+        now = datetime.now(timezone.utc).isoformat()
         if "created" not in self:
             self["created"] = now
         if "modified" not in self:
