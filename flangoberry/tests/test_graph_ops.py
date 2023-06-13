@@ -272,14 +272,3 @@ def test_get_or_create_edge(tests_conn, cleanup):
     assert eg_edge3["_from"] == eg_node["_id"]
     assert eg_edge3["_to"] == eg_person["_id"]
     assert eg_edge3["some_new_attr"] == "something"
-
-
-def test_to_gql():
-    orig = {"_key": "somekey", "_rev": "somerev", "_id": "someid", "animal": "monkey"}
-    obj = graph_ops.to_gql(orig)
-    assert "_key" not in obj
-    assert obj["key"] == orig["_key"]
-    assert "_rev" not in obj
-    assert obj["rev"] == orig["_rev"]
-    assert "_id" not in obj
-    assert obj["id"] == orig["_id"]
