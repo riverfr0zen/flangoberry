@@ -20,33 +20,14 @@ def test_eg_field_query(testappcli):
     assert res.json["data"]["egfield"] == "Example field, someheader, somevar"
 
 
-def test_helper_to_gql():
-    # Test without passing a custom object_type, should still catch 'created' and 'modified' fields
-    orig = {
-        "_key": "somekey",
-        "_rev": "somerev",
-        "_id": "someid",
-        "animal": "monkey",
-        "created": datetime.now().isoformat(),
-        "modified": datetime.now().isoformat(),
-    }
-    obj = helpers.to_gql(orig)
-    assert "_key" not in obj
-    assert obj["key"] == orig["_key"]
-    assert "_rev" not in obj
-    assert obj["rev"] == orig["_rev"]
-    assert "_id" not in obj
-    assert obj["id"] == orig["_id"]
-    assert isinstance(obj["created"], datetime)
-    assert isinstance(obj["modified"], datetime)
+@strawberry.type
+class MyVertexType(types.BaseVertexFieldsMixin):
+    animal: str
+    some_custom_datetime: datetime
 
-    # Test passing a custom object_type
-    @strawberry.type
-    class MyVertexType(types.BaseVertexFieldsMixin):
-        animal: str
-        some_custom_datetime: datetime
 
-    orig = {
+def test_vertex_from_dbdoc():
+    doc = {
         "_key": "somekey",
         "_rev": "somerev",
         "_id": "someid",
@@ -55,13 +36,15 @@ def test_helper_to_gql():
         "modified": datetime.now().isoformat(),
         "some_custom_datetime": datetime.now().isoformat(),
     }
-    obj = helpers.to_gql(orig, MyVertexType)
-    assert "_key" not in obj
-    assert obj["key"] == orig["_key"]
-    assert "_rev" not in obj
-    assert obj["rev"] == orig["_rev"]
-    assert "_id" not in obj
-    assert obj["id"] == orig["_id"]
-    assert isinstance(obj["created"], datetime)
-    assert isinstance(obj["modified"], datetime)
-    assert isinstance(obj["some_custom_datetime"], datetime)
+
+    obj = MyVertexType.from_dbdoc(doc)
+    assert not hasattr(obj, "_key")
+    assert obj.key == doc["_key"]
+    assert not hasattr(obj, "_rev")
+    assert obj.rev == doc["_rev"]
+    assert not hasattr(obj, "_id")
+    assert obj.id == doc["_id"]
+    assert obj.animal == "monkey"
+    assert isinstance(obj.created, datetime)
+    assert isinstance(obj.modified, datetime)
+    assert isinstance(obj.some_custom_datetime, datetime)
