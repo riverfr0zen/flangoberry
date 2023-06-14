@@ -2,6 +2,8 @@ from collections import namedtuple
 from flangoberry import logger
 from flangoberry import db
 from .graph_defs import BaseVertex, BaseEdge
+from datetime import datetime, timezone
+from arango.exceptions import DocumentInsertError, DocumentUpdateError
 
 
 class DataOpsException(Exception):
@@ -71,7 +73,25 @@ def create_vertex(vertex: BaseVertex, storage_def=None) -> dict:
         raise DataOpsException("`vertex` must be an instance of BaseVertex")
 
     storage = resolve_vertex_storage(vertex, storage_def)
-    return storage.collection.insert(vertex, return_new=True)["new"]
+    try:
+        return storage.collection.insert(vertex, return_new=True)["new"]
+    except DocumentInsertError as e:
+        raise DataOpsException(f"arango.exceptions.DocumentInsertError: {e}")
+
+
+def update_vertex(vertex: BaseVertex, storage_def=None) -> dict:
+    if not isinstance(vertex, BaseVertex):
+        raise DataOpsException("`vertex` must be an instance of BaseVertex")
+
+    if "created" in vertex:
+        del vertex["created"]
+    vertex["modified"] = datetime.now(timezone.utc).isoformat()
+
+    storage = resolve_vertex_storage(vertex, storage_def)
+    try:
+        return storage.collection.update(vertex, return_new=True)["new"]
+    except DocumentUpdateError as e:
+        raise DataOpsException(f"arango.exceptions.DocumentUpdateError: {e}")
 
 
 def get_vertex(

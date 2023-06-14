@@ -98,6 +98,49 @@ def test_create_vertex(tests_conn, cleanup):
     assert result["_key"] == "myspecialkey"
     assert storage.collection.get(result["_key"])
 
+    # Test DataOpsException if db returns DocumentInsertError
+    with pytest.raises(graph_ops.DataOpsException) as einfo:
+        result = graph_ops.create_vertex(eg_node)
+    assert "unique constraint violated" in str(einfo)
+
+
+def test_update_vertex(tests_conn, cleanup):
+    with pytest.raises(graph_ops.DataOpsException) as einfo:
+        result = graph_ops.update_vertex({"some": "invalid", "dict": "fails"})
+    assert "must be an instance of BaseVertex" in str(einfo)
+
+    eg_node = ExampleNode(attr1="attr1_rev1", attr2="attr2_rev1")
+    insert_result = graph_ops.create_vertex(eg_node)
+    # logger.debug(insert_result)
+
+    eg_node = ExampleNode(_id=insert_result["_id"], attr1="attr1_rev2")
+    update_result = graph_ops.update_vertex(eg_node)
+    # logger.debug(update_result)
+    assert update_result["_id"] == insert_result["_id"]
+    assert update_result["_key"] == insert_result["_key"]
+    assert datetime.fromisoformat(update_result["created"]) == datetime.fromisoformat(
+        insert_result["created"]
+    )
+    assert datetime.fromisoformat(update_result["modified"]) > datetime.fromisoformat(
+        insert_result["modified"]
+    )
+
+    storage = graph_ops.resolve_vertex_storage(ExampleNode)
+    updated_node_from_db = storage.collection.get(insert_result["_key"])
+    assert updated_node_from_db["attr1"] == "attr1_rev2"
+    assert updated_node_from_db["attr2"] == "attr2_rev1"
+    assert datetime.fromisoformat(
+        updated_node_from_db["modified"]
+    ) > datetime.fromisoformat(updated_node_from_db["created"])
+
+    # Test DataOpsException if db returns DocumentUpdateError
+    non_existent_node = ExampleNode(
+        _id="example_nodes/non_existent_id", attr1="not real"
+    )
+    with pytest.raises(graph_ops.DataOpsException) as einfo:
+        result = graph_ops.update_vertex(non_existent_node)
+    assert "DocumentUpdateError" in str(einfo)
+
 
 def test_get_vertex(tests_conn, cleanup):
     result = graph_ops.get_vertex(ExampleNode, {"attr1": "nonexistent"})
