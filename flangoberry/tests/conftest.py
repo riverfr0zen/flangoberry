@@ -1,5 +1,6 @@
 import json
 import pytest
+import logging
 from flangoberry import settings, logger, db
 from ..appfactory import create_app
 
@@ -46,6 +47,12 @@ def gql_query_func(appcli):
         return res
 
     return gql
+
+
+@pytest.fixture
+def suppress_gql_error_log():
+    """Avoid logging out strawberry GraphQL errors"""
+    logging.getLogger("strawberry.execution").setLevel(logging.CRITICAL)
 
 
 def testappcli_fixture(create_app_func):
