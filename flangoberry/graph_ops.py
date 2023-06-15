@@ -60,6 +60,7 @@ def resolve_edge_storage(edge: BaseEdge | type[BaseEdge], storage_def=None):
     else:
         coll = graph.create_edge_definition(**edge_def)
 
+    # @TODO Add test coverage. See how it's done for vertices.
     if persistent_indexes := storage_def.get("persistent_indexes", None):
         for p_index in persistent_indexes:
             p_index["in_background"] = True
@@ -68,7 +69,7 @@ def resolve_edge_storage(edge: BaseEdge | type[BaseEdge], storage_def=None):
     return EdgeStorage(dbase, graph, coll)
 
 
-def create_vertex(vertex: BaseVertex, storage_def=None) -> dict:
+def create_vertex(vertex: type[BaseVertex], storage_def=None) -> dict:
     if not isinstance(vertex, BaseVertex):
         raise DataOpsException("`vertex` must be an instance of BaseVertex")
 
@@ -79,7 +80,7 @@ def create_vertex(vertex: BaseVertex, storage_def=None) -> dict:
         raise DataOpsException(f"arango.exceptions.DocumentInsertError: {e}")
 
 
-def update_vertex(vertex: BaseVertex, storage_def=None) -> dict:
+def update_vertex(vertex: type[BaseVertex], storage_def=None) -> dict:
     if not isinstance(vertex, BaseVertex):
         raise DataOpsException("`vertex` must be an instance of BaseVertex")
 
@@ -120,12 +121,27 @@ def get_or_create_vertex(
     return False, create_vertex(vertex_def(**search))
 
 
-def create_edge(edge: BaseEdge, storage_def=None) -> dict:
+def create_edge(edge: type[BaseEdge], storage_def=None) -> dict:
     if not isinstance(edge, BaseEdge):
         raise DataOpsException("`edge` must be an instance of BaseEdge")
 
     storage = resolve_edge_storage(edge, storage_def)
     return storage.collection.insert(edge, return_new=True)["new"]
+
+
+def update_edge(edge: type[BaseEdge], storage_def=None) -> dict:
+    if not isinstance(edge, BaseEdge):
+        raise DataOpsException("`edge` must be an instance of BaseEdge")
+
+    if "created" in edge:
+        del edge["created"]
+    edge["modified"] = datetime.now(timezone.utc).isoformat()
+
+    storage = resolve_edge_storage(edge, storage_def)
+    try:
+        return storage.collection.update(edge, return_new=True)["new"]
+    except DocumentUpdateError as e:
+        raise DataOpsException(f"arango.exceptions.DocumentUpdateError: {e}")
 
 
 def _handle_get_edge_search_args(

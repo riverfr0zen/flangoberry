@@ -256,6 +256,47 @@ def test_create_edge(tests_conn, cleanup):
     assert eg_edge_from_db["_to"] == eg_person["_id"]
 
 
+def test_update_edge(tests_conn, cleanup):
+    with pytest.raises(graph_ops.DataOpsException) as einfo:
+        graph_ops.update_edge({"some": "invalid", "dict": "fails"})
+    assert "must be an instance of BaseEdge" in str(einfo)
+
+    eg_node = graph_ops.create_vertex(ExampleNode(attr1="val1", attr2="val2"))
+    eg_person = graph_ops.create_vertex(ExamplePerson(attr1="p1", attr2="p2"))
+    eg_edge = ExampleEdge(frm=eg_node, to=eg_person, attr1="attr1")
+    insert_result = graph_ops.create_edge(eg_edge)
+
+    eg_edge_update = ExampleEdge(_id=insert_result["_id"], attr1="updated attr1")
+    update_result = graph_ops.update_edge(eg_edge_update)
+    logger.debug(update_result)
+    assert update_result["_id"] == insert_result["_id"]
+    assert update_result["_key"] == insert_result["_key"]
+    assert datetime.fromisoformat(update_result["created"]) == datetime.fromisoformat(
+        insert_result["created"]
+    )
+    assert datetime.fromisoformat(update_result["modified"]) > datetime.fromisoformat(
+        insert_result["modified"]
+    )
+
+    storage = graph_ops.resolve_edge_storage(eg_edge)
+    eg_edge_from_db = storage.collection.get(insert_result["_key"])
+    assert eg_edge_from_db["_from"] == eg_node["_id"]
+    assert eg_edge_from_db["_to"] == eg_person["_id"]
+    assert eg_edge_from_db["created"] == eg_edge["created"]
+    assert datetime.fromisoformat(eg_edge_from_db["modified"]) > datetime.fromisoformat(
+        eg_edge_from_db["created"]
+    )
+    assert eg_edge_from_db["attr1"] == eg_edge_update["attr1"]
+
+    # Test DataOpsException if db returns DocumentUpdateError
+    non_existent_edge = ExampleEdge(
+        _id="example_edges/non_existent_id", attr1="not real"
+    )
+    with pytest.raises(graph_ops.DataOpsException) as einfo:
+        result = graph_ops.update_edge(non_existent_edge)
+    assert "DocumentUpdateError" in str(einfo)
+
+
 def test_get_edge(tests_conn, cleanup):
     with pytest.raises(graph_ops.DataOpsException, match="At least one"):
         graph_ops.get_edge(ExampleEdge)
