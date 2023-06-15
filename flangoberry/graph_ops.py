@@ -126,7 +126,11 @@ def create_edge(edge: type[BaseEdge], storage_def=None) -> dict:
         raise DataOpsException("`edge` must be an instance of BaseEdge")
 
     storage = resolve_edge_storage(edge, storage_def)
-    return storage.collection.insert(edge, return_new=True)["new"]
+    try:
+        return storage.collection.insert(edge, return_new=True)["new"]
+    except DocumentInsertError as e:
+        raise DataOpsException(f"arango.exceptions.DocumentInsertError: {e}")
+    # return storage.collection.insert(edge, return_new=True)["new"]
 
 
 def update_edge(edge: type[BaseEdge], storage_def=None) -> dict:

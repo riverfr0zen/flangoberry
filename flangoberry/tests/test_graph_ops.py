@@ -255,6 +255,11 @@ def test_create_edge(tests_conn, cleanup):
     assert eg_edge_from_db["_from"] == eg_node["_id"]
     assert eg_edge_from_db["_to"] == eg_person["_id"]
 
+    # Test DataOpsException if db returns DocumentInsertError
+    with pytest.raises(graph_ops.DataOpsException) as einfo:
+        result = graph_ops.create_edge(eg_edge)
+    assert "unique constraint violated" in str(einfo)
+
 
 def test_update_edge(tests_conn, cleanup):
     with pytest.raises(graph_ops.DataOpsException) as einfo:
@@ -268,7 +273,7 @@ def test_update_edge(tests_conn, cleanup):
 
     eg_edge_update = ExampleEdge(_id=insert_result["_id"], attr1="updated attr1")
     update_result = graph_ops.update_edge(eg_edge_update)
-    logger.debug(update_result)
+    # logger.debug(update_result)
     assert update_result["_id"] == insert_result["_id"]
     assert update_result["_key"] == insert_result["_key"]
     assert datetime.fromisoformat(update_result["created"]) == datetime.fromisoformat(
