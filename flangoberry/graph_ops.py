@@ -130,7 +130,6 @@ def create_edge(edge: type[BaseEdge], storage_def=None) -> dict:
         return storage.collection.insert(edge, return_new=True)["new"]
     except DocumentInsertError as e:
         raise DataOpsException(f"arango.exceptions.DocumentInsertError: {e}")
-    # return storage.collection.insert(edge, return_new=True)["new"]
 
 
 def update_edge(edge: type[BaseEdge], storage_def=None) -> dict:
