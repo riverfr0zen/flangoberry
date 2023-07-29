@@ -9,6 +9,18 @@ VERSION = "0.1.0"
 #
 SHOW_GRAPHIQL = True
 
+#
+# CORS
+#
+CORS_RESOURCES = {
+    #
+    # Allow everything (discouraged)
+    # r"/graphql/*": {"origins": "*"}
+    #
+    # Sveltekit local dev server
+    # r"/graphql": {"origins": "http://localhost:5173"}
+    #
+}
 
 #
 # ArangoDb
