@@ -182,6 +182,7 @@ def test_get_or_create_vertex(tests_conn, cleanup):
     assert result3["_key"] != result["_key"]
     assert result3["_key"] != result2["_key"]
     assert "attr1" not in result3
+    assert result3["attr2"] == "soon_to_exist"
 
 
     storage = graph_ops.resolve_vertex_storage(ExampleNode)
