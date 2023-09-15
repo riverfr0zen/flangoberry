@@ -175,6 +175,15 @@ def test_get_or_create_vertex(tests_conn, cleanup):
     assert existed is True
     assert result2["_key"] == result["_key"]
 
+    existed, result3 = graph_ops.get_or_create_vertex(
+        ExampleNode, {"attr1": "wont_exist"}, new_doc={"attr2": "soon_to_exist"}
+    )
+    assert existed is False
+    assert result3["_key"] != result["_key"]
+    assert result3["_key"] != result2["_key"]
+    assert "attr1" not in result3
+
+
     storage = graph_ops.resolve_vertex_storage(ExampleNode)
     db_result = storage.collection.find({"attr1": "soon_to_exist"})
     assert db_result.count() == 1
@@ -361,3 +370,17 @@ def test_get_or_create_edge(tests_conn, cleanup):
     assert eg_edge3["_from"] == eg_node["_id"]
     assert eg_edge3["_to"] == eg_person["_id"]
     assert eg_edge3["some_new_attr"] == "something"
+
+    # This will create a new edge because of no match, but the new edge will be based on
+    # `new_doc` not `search`
+    existed, eg_edge4 = graph_ops.get_or_create_edge(
+        ExampleEdge, frm=eg_node, to=eg_person, 
+        search={"some_new_attr": "something different"}, new_doc={"some_new_prop": "hi"}
+    )
+    assert existed is False
+    assert eg_edge4["_key"] != eg_edge["_key"]
+    assert eg_edge4["_key"] != eg_edge3["_key"]
+    assert eg_edge4["_from"] == eg_node["_id"]
+    assert eg_edge4["_to"] == eg_person["_id"]
+    assert "some_new_attr" not in eg_edge4
+    assert eg_edge4["some_new_prop"] == "hi"

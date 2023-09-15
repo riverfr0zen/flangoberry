@@ -108,7 +108,7 @@ def get_vertex(
 
 
 def get_or_create_vertex(
-    vertex_def: type[BaseVertex], search: dict, storage_def: dict = None
+    vertex_def: type[BaseVertex], search: dict, new_doc: dict | None = None, storage_def: dict = None
 ) -> tuple[bool, dict]:
     """
     Example: `already_existed, vertex = get_or_create_vertex(SomeVertexType, {'name': 'Some name'})`
@@ -118,7 +118,9 @@ def get_or_create_vertex(
     """
     if vertex := get_vertex(vertex_def, search, storage_def):
         return True, vertex
-    return False, create_vertex(vertex_def(**search))
+    if not new_doc:
+        new_doc = search
+    return False, create_vertex(vertex_def(**new_doc))
 
 
 def create_edge(edge: BaseEdge, storage_def=None) -> dict:
@@ -187,6 +189,7 @@ def get_or_create_edge(
     search: dict = None,
     frm: BaseVertex = None,
     to: BaseVertex = None,
+    new_doc: dict = None,
     storage_def=None,
 ) -> tuple[bool, dict]:
     """
@@ -203,4 +206,9 @@ def get_or_create_edge(
     ):
         return True, edge
     search = _handle_get_edge_search_args(search, frm, to)
-    return False, create_edge(edge_def(**search), storage_def)
+    if new_doc:
+        new_doc = _handle_get_edge_search_args(new_doc, frm, to)
+    else:
+        new_doc = _handle_get_edge_search_args(search, frm, to)
+    
+    return False, create_edge(edge_def(**new_doc), storage_def)
