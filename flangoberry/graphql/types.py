@@ -5,12 +5,18 @@ from .helpers import to_py_date
 
 
 @strawberry.type
-class BaseVertexFieldsMixin:
+class BaseMetadataMixin:
+    created: datetime
+    modified: datetime
+
+
+@strawberry.type
+class BaseVertexFieldsMixin(BaseMetadataMixin):
     id: str
     key: str
     rev: str
-    created: datetime
-    modified: datetime
+    # created: datetime
+    # modified: datetime
 
     @classmethod
     def from_dbdoc(cls, doc: dict) -> dict:
@@ -33,14 +39,14 @@ class BaseVertexFieldsMixin:
 
 
 @strawberry.type
-class BaseEdgeFieldsMixin:
+class BaseEdgeFieldsMixin(BaseMetadataMixin):
     id: str
     key: str
     rev: str
     frm: str
     to: str
-    created: datetime
-    modified: datetime
+    # created: datetime
+    # modified: datetime
 
     @classmethod
     def from_dbdoc(cls, doc: dict) -> dict:

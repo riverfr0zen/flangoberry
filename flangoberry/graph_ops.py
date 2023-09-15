@@ -69,7 +69,7 @@ def resolve_edge_storage(edge: BaseEdge | type[BaseEdge], storage_def=None):
     return EdgeStorage(dbase, graph, coll)
 
 
-def create_vertex(vertex: type[BaseVertex], storage_def=None) -> dict:
+def create_vertex(vertex: BaseVertex, storage_def=None) -> dict:
     if not isinstance(vertex, BaseVertex):
         raise DataOpsException("`vertex` must be an instance of BaseVertex")
 
@@ -80,7 +80,7 @@ def create_vertex(vertex: type[BaseVertex], storage_def=None) -> dict:
         raise DataOpsException(f"arango.exceptions.DocumentInsertError: {e}")
 
 
-def update_vertex(vertex: type[BaseVertex], storage_def=None) -> dict:
+def update_vertex(vertex: BaseVertex, storage_def=None) -> dict:
     if not isinstance(vertex, BaseVertex):
         raise DataOpsException("`vertex` must be an instance of BaseVertex")
 
@@ -121,7 +121,7 @@ def get_or_create_vertex(
     return False, create_vertex(vertex_def(**search))
 
 
-def create_edge(edge: type[BaseEdge], storage_def=None) -> dict:
+def create_edge(edge: BaseEdge, storage_def=None) -> dict:
     if not isinstance(edge, BaseEdge):
         raise DataOpsException("`edge` must be an instance of BaseEdge")
 
@@ -132,7 +132,7 @@ def create_edge(edge: type[BaseEdge], storage_def=None) -> dict:
         raise DataOpsException(f"arango.exceptions.DocumentInsertError: {e}")
 
 
-def update_edge(edge: type[BaseEdge], storage_def=None) -> dict:
+def update_edge(edge: BaseEdge, storage_def=None) -> dict:
     if not isinstance(edge, BaseEdge):
         raise DataOpsException("`edge` must be an instance of BaseEdge")
 
