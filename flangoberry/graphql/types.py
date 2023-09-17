@@ -1,7 +1,8 @@
 import strawberry
 from datetime import datetime
-from typing import Optional, get_type_hints
+from typing import Any, get_type_hints
 from .helpers import to_py_date
+from dataclasses import asdict
 
 
 @strawberry.type
@@ -10,13 +11,16 @@ class BaseMetadataMixin:
     modified: datetime
 
 
-@strawberry.type
-class BaseVertexFieldsMixin(BaseMetadataMixin):
-    id: str
-    key: str
-    rev: str
-    # created: datetime
-    # modified: datetime
+class BaseVertexMethodsMixin:
+    def to_dbdoc(self) -> dict[str, Any]:
+        """Returns a dict with core prop names prefixed with underscore as expected by db
+        @TODO: Might need to handle datetime too in the future (see `from_dbdoc` sister 
+        method below)"""
+        def _keyf(k):
+            if k in ['key', 'id', 'rev']:
+                return f'_{k}'
+            return k
+        return {_keyf(k):v for k,v in asdict(self).items()}
 
     @classmethod
     def from_dbdoc(cls, doc: dict) -> dict:
@@ -36,6 +40,15 @@ class BaseVertexFieldsMixin(BaseMetadataMixin):
                 v = to_py_date(v)
             converted_data[k] = v
         return cls(**converted_data)
+
+
+@strawberry.type
+class BaseVertexFieldsMixin(BaseVertexMethodsMixin, BaseMetadataMixin):
+    id: str
+    key: str
+    rev: str
+    # created: datetime
+    # modified: datetime
 
 
 @strawberry.type

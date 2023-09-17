@@ -50,6 +50,27 @@ def test_vertex_from_dbdoc():
     assert isinstance(obj.some_custom_datetime, datetime)
 
 
+def test_vertex_to_dbdoc():
+    doc = {
+        "_key": "somekey",
+        "_rev": "somerev",
+        "_id": "someid",
+        "animal": "monkey",
+        "created": datetime.now().isoformat(),
+        "modified": datetime.now().isoformat(),
+        "some_custom_datetime": datetime.now().isoformat(),
+    }
+
+    obj = MyVertexType.from_dbdoc(doc)
+    out_dict = obj.to_dbdoc()
+    assert 'id' not in out_dict
+    assert out_dict['_id'] == 'someid'
+    assert 'key' not in out_dict
+    assert out_dict['_key'] == 'somekey'
+    assert 'rev' not in out_dict
+    assert out_dict['_rev'] == 'somerev'
+
+
 @strawberry.type
 class MyEdgeType(types.BaseEdgeFieldsMixin):
     animal: str
