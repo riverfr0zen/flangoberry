@@ -34,6 +34,6 @@ class ExampleEdge(graph_ops.BaseEdge):
         "edge_definition": {
             "edge_collection": "example_edges",
             "from_vertex_collections": ["example_nodes"],
-            "to_vertex_collections": ["example_people"],
+            "to_vertex_collections": ["example_people", "example_nodes"],
         },
     }

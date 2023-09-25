@@ -24,6 +24,8 @@ class BaseVertex(dict):
             self["created"] = now
         if "modified" not in self:
             self["modified"] = now
+        if "is_root" not in self:
+            self['is_root'] = True
 
 
 class BaseEdge(dict):

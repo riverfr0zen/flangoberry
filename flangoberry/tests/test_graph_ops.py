@@ -271,6 +271,32 @@ def test_create_edge(tests_conn, cleanup):
     assert "unique constraint violated" in str(einfo)
 
 
+def test_set_root_node(tests_conn, cleanup):
+    eg_node = graph_ops.create_vertex(ExampleNode(attr1="val1", attr2="val2"))
+    eg_node2 = graph_ops.create_vertex(ExampleNode(attr1="n2-val1", attr2="n2-val2"))
+    eg_node3 = graph_ops.create_vertex(ExampleNode(attr1="n3-val1", attr2="n3-val2"))
+    eg_person = graph_ops.create_vertex(ExamplePerson(attr1="p1", attr2="p2"))
+    eg_edge_node_person = ExampleEdge(frm=eg_node, to=eg_person, attr1="rel1")
+    graph_ops.create_edge(eg_edge_node_person)
+    eg_edge_node_node2 = ExampleEdge(frm=eg_node, to=eg_node2, attr1="n-n2")
+    graph_ops.create_edge(eg_edge_node_node2)
+    eg_edge_node2_person = ExampleEdge(frm=eg_node2, to=eg_person, attr1="n2-person")
+    graph_ops.create_edge(eg_edge_node2_person)
+    eg_edge_node3_person = ExampleEdge(frm=eg_node3, to=eg_person, attr1="n3-person")
+    graph_ops.create_edge(eg_edge_node3_person)
+
+    # Fetch from db and check
+    eg_node = graph_ops.get_vertex(ExampleNode, {"_id": eg_node['_id']})
+    assert eg_node['is_root'] == True
+    eg_node2 = graph_ops.get_vertex(ExampleNode, {"_id": eg_node2['_id']})
+    assert eg_node2['is_root'] == False
+    eg_node3 = graph_ops.get_vertex(ExampleNode, {"_id": eg_node3['_id']})
+    assert eg_node3['is_root'] == True
+    eg_person = graph_ops.get_vertex(ExamplePerson, {"_id": eg_person['_id']})
+    assert eg_person['is_root'] == False
+
+
+
 def test_update_edge(tests_conn, cleanup):
     with pytest.raises(graph_ops.DataOpsException) as einfo:
         graph_ops.update_edge({"some": "invalid", "dict": "fails"})

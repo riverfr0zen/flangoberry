@@ -108,7 +108,10 @@ def get_vertex(
 
 
 def get_or_create_vertex(
-    vertex_def: type[BaseVertex], search: dict, new_doc: dict | None = None, storage_def: dict = None
+    vertex_def: type[BaseVertex],
+    search: dict,
+    new_doc: dict | None = None,
+    storage_def: dict = None,
 ) -> tuple[bool, dict]:
     """
     Example: `already_existed, vertex = get_or_create_vertex(SomeVertexType, {'name': 'Some name'})`
@@ -129,7 +132,9 @@ def create_edge(edge: BaseEdge, storage_def=None) -> dict:
 
     storage = resolve_edge_storage(edge, storage_def)
     try:
-        return storage.collection.insert(edge, return_new=True)["new"]
+        edge = storage.collection.insert(edge, return_new=True)
+        storage.db.update_document({'_id': edge['new']['_to'], 'is_root': False})
+        return edge["new"]
     except DocumentInsertError as e:
         raise DataOpsException(f"arango.exceptions.DocumentInsertError: {e}")
 
@@ -210,5 +215,5 @@ def get_or_create_edge(
         new_doc = _handle_get_edge_search_args(new_doc, frm, to)
     else:
         new_doc = _handle_get_edge_search_args(search, frm, to)
-    
+
     return False, create_edge(edge_def(**new_doc), storage_def)
