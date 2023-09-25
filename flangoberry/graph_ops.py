@@ -134,6 +134,7 @@ def create_edge(edge: BaseEdge, storage_def=None) -> dict:
     try:
         edge = storage.collection.insert(edge, return_new=True)
         storage.db.update_document({'_id': edge['new']['_to'], 'is_root': False})
+        storage.db.update_document({'_id': edge['new']['_from'], 'is_leaf': False})
         return edge["new"]
     except DocumentInsertError as e:
         raise DataOpsException(f"arango.exceptions.DocumentInsertError: {e}")

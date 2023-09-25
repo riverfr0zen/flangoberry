@@ -26,6 +26,8 @@ class BaseVertex(dict):
             self["modified"] = now
         if "is_root" not in self:
             self['is_root'] = True
+        if "is_leaf" not in self:
+            self['is_leaf'] = True
 
 
 class BaseEdge(dict):

@@ -271,7 +271,7 @@ def test_create_edge(tests_conn, cleanup):
     assert "unique constraint violated" in str(einfo)
 
 
-def test_set_root_node(tests_conn, cleanup):
+def test_set_root_and_leaf_attrs(tests_conn, cleanup):
     eg_node = graph_ops.create_vertex(ExampleNode(attr1="val1", attr2="val2"))
     eg_node2 = graph_ops.create_vertex(ExampleNode(attr1="n2-val1", attr2="n2-val2"))
     eg_node3 = graph_ops.create_vertex(ExampleNode(attr1="n3-val1", attr2="n3-val2"))
@@ -290,10 +290,12 @@ def test_set_root_node(tests_conn, cleanup):
     assert eg_node['is_root'] == True
     eg_node2 = graph_ops.get_vertex(ExampleNode, {"_id": eg_node2['_id']})
     assert eg_node2['is_root'] == False
+    assert eg_node2['is_leaf'] == False
     eg_node3 = graph_ops.get_vertex(ExampleNode, {"_id": eg_node3['_id']})
     assert eg_node3['is_root'] == True
     eg_person = graph_ops.get_vertex(ExamplePerson, {"_id": eg_person['_id']})
     assert eg_person['is_root'] == False
+    assert eg_person['is_leaf'] == True
 
 
 

@@ -10,7 +10,6 @@ class BaseMetadataMixin:
     created: datetime
     modified: datetime
 
-
 class BaseVertexMethodsMixin:
     def to_dbdoc(self) -> dict[str, Any]:
         """Returns a dict with core prop names prefixed with underscore as expected by db
@@ -49,6 +48,8 @@ class BaseVertexFieldsMixin(BaseVertexMethodsMixin, BaseMetadataMixin):
     rev: str
     # created: datetime
     # modified: datetime
+    is_root: bool
+    is_leaf: bool
 
 
 @strawberry.type
