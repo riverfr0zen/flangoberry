@@ -218,3 +218,7 @@ def get_or_create_edge(
         new_doc = _handle_get_edge_search_args(search, frm, to)
 
     return False, create_edge(edge_def(**new_doc), storage_def)
+
+
+def get_collection_name_from_id(id: str):
+    return id.split("/")[0]
