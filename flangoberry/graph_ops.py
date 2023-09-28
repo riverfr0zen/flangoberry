@@ -133,8 +133,11 @@ def create_edge(edge: BaseEdge, storage_def=None) -> dict:
     storage = resolve_edge_storage(edge, storage_def)
     try:
         edge = storage.collection.insert(edge, return_new=True)
-        storage.db.update_document({'_id': edge['new']['_to'], 'is_root': False})
-        storage.db.update_document({'_id': edge['new']['_from'], 'is_leaf': False})
+        now = datetime.now(timezone.utc).isoformat()
+        storage.db.update_document(
+            {"_id": edge["new"]["_to"], "is_root": False, "inbound_modified": now}
+        )
+        storage.db.update_document({"_id": edge["new"]["_from"], "is_leaf": False})
         return edge["new"]
     except DocumentInsertError as e:
         raise DataOpsException(f"arango.exceptions.DocumentInsertError: {e}")
