@@ -4,6 +4,9 @@ from typing import Any, Optional, get_type_hints
 from .helpers import to_py_date
 from dataclasses import asdict
 
+# Type alias for tags field
+Tags = Optional[list[str]]
+
 
 @strawberry.type
 class BaseMetadataMixin:
@@ -53,7 +56,7 @@ class BaseVertexFieldsMixin(BaseVertexMethodsMixin, BaseMetadataMixin):
     # modified: datetime
     is_root: bool
     is_leaf: bool
-    tags: Optional[list[str]] = None
+    tags: Tags = None
     inbound_modified: Optional[datetime] = None
 
 
