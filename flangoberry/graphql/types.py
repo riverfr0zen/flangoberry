@@ -53,6 +53,7 @@ class BaseVertexFieldsMixin(BaseVertexMethodsMixin, BaseMetadataMixin):
     # modified: datetime
     is_root: bool
     is_leaf: bool
+    tags: Optional[list[str]] = None
     inbound_modified: Optional[datetime] = None
 
 
