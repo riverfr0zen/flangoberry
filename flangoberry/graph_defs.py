@@ -17,17 +17,18 @@ class BaseVertex(dict):
         ],
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, set_defaults: bool = True, **kwargs):
         super().__init__(**kwargs)
-        now = datetime.now(timezone.utc).isoformat()
-        if "created" not in self:
-            self["created"] = now
-        if "modified" not in self:
-            self["modified"] = now
-        if "is_root" not in self:
-            self['is_root'] = True
-        if "is_leaf" not in self:
-            self['is_leaf'] = True
+        if set_defaults:
+            now = datetime.now(timezone.utc).isoformat()
+            if "created" not in self:
+                self["created"] = now
+            if "modified" not in self:
+                self["modified"] = now
+            if "is_root" not in self:
+                self["is_root"] = True
+            if "is_leaf" not in self:
+                self["is_leaf"] = True
 
 
 class BaseEdge(dict):

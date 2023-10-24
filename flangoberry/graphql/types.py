@@ -3,6 +3,8 @@ from datetime import datetime
 from typing import Any, Optional, get_type_hints
 from .helpers import to_py_date
 from dataclasses import asdict
+from flangoberry import logger
+
 
 # Type alias for tags field
 Tags = Optional[list[str]]

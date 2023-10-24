@@ -87,6 +87,8 @@ def update_vertex(vertex: BaseVertex, storage_def=None) -> dict:
     if "created" in vertex:
         del vertex["created"]
     vertex["modified"] = datetime.now(timezone.utc).isoformat()
+    if "tags" in vertex and not vertex["tags"]:
+        vertex.pop("tags")
 
     storage = resolve_vertex_storage(vertex, storage_def)
     try:
