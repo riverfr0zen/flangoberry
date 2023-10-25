@@ -9,11 +9,6 @@ from arango.collection import VertexCollection, EdgeCollection
 from arango.graph import Graph
 
 
-#
-# Vertices
-#
-
-
 def test_resolve_vertex_storage(tests_conn, cleanup):
     eg_node = ExampleNode(attr1="val1", attr2="val2")
     storage = graph_ops.resolve_vertex_storage(eg_node)
@@ -184,15 +179,9 @@ def test_get_or_create_vertex(tests_conn, cleanup):
     assert "attr1" not in result3
     assert result3["attr2"] == "soon_to_exist"
 
-
     storage = graph_ops.resolve_vertex_storage(ExampleNode)
     db_result = storage.collection.find({"attr1": "soon_to_exist"})
     assert db_result.count() == 1
-
-
-#
-# Edges
-#
 
 
 def test_resolve_edge_storage(tests_conn, cleanup):
@@ -286,17 +275,16 @@ def test_set_root_and_leaf_attrs(tests_conn, cleanup):
     graph_ops.create_edge(eg_edge_node3_person)
 
     # Fetch from db and check
-    eg_node = graph_ops.get_vertex(ExampleNode, {"_id": eg_node['_id']})
-    assert eg_node['is_root'] == True
-    eg_node2 = graph_ops.get_vertex(ExampleNode, {"_id": eg_node2['_id']})
-    assert eg_node2['is_root'] == False
-    assert eg_node2['is_leaf'] == False
-    eg_node3 = graph_ops.get_vertex(ExampleNode, {"_id": eg_node3['_id']})
-    assert eg_node3['is_root'] == True
-    eg_person = graph_ops.get_vertex(ExamplePerson, {"_id": eg_person['_id']})
-    assert eg_person['is_root'] == False
-    assert eg_person['is_leaf'] == True
-
+    eg_node = graph_ops.get_vertex(ExampleNode, {"_id": eg_node["_id"]})
+    assert eg_node["is_root"] == True
+    eg_node2 = graph_ops.get_vertex(ExampleNode, {"_id": eg_node2["_id"]})
+    assert eg_node2["is_root"] == False
+    assert eg_node2["is_leaf"] == False
+    eg_node3 = graph_ops.get_vertex(ExampleNode, {"_id": eg_node3["_id"]})
+    assert eg_node3["is_root"] == True
+    eg_person = graph_ops.get_vertex(ExamplePerson, {"_id": eg_person["_id"]})
+    assert eg_person["is_root"] == False
+    assert eg_person["is_leaf"] == True
 
 
 def test_update_edge(tests_conn, cleanup):
@@ -403,8 +391,11 @@ def test_get_or_create_edge(tests_conn, cleanup):
     # This will create a new edge because of no match, but the new edge will be based on
     # `new_doc` not `search`
     existed, eg_edge4 = graph_ops.get_or_create_edge(
-        ExampleEdge, frm=eg_node, to=eg_person, 
-        search={"some_new_attr": "something different"}, new_doc={"some_new_prop": "hi"}
+        ExampleEdge,
+        frm=eg_node,
+        to=eg_person,
+        search={"some_new_attr": "something different"},
+        new_doc={"some_new_prop": "hi"},
     )
     assert existed is False
     assert eg_edge4["_key"] != eg_edge["_key"]
@@ -413,3 +404,29 @@ def test_get_or_create_edge(tests_conn, cleanup):
     assert eg_edge4["_to"] == eg_person["_id"]
     assert "some_new_attr" not in eg_edge4
     assert eg_edge4["some_new_prop"] == "hi"
+
+
+def test_delete_vertex(tests_conn, cleanup):
+    v1 = graph_ops.create_vertex(ExampleNode(attr1="v1a1", attr2="v1a2"))
+    v2 = graph_ops.create_vertex(ExampleNode(attr1="v2a1", attr2="v2a2"))
+    v3 = graph_ops.create_vertex(ExampleNode(attr1="v3a1", attr2="v3a2"))
+
+    v1_v2 = graph_ops.create_edge(ExampleEdge(frm=v1, to=v2, attr1="v1v2"))
+    v1_v3 = graph_ops.create_edge(ExampleEdge(frm=v1, to=v3, attr1="v1v3"))
+    v2_v3 = graph_ops.create_edge(ExampleEdge(frm=v2, to=v3, attr1="v2v3"))
+
+    delete_ok = graph_ops.delete_vertex(ExampleNode, v1["_id"])
+    assert delete_ok
+
+    # Edges connected to v1 should be deleted too
+    v1 = graph_ops.get_vertex(ExampleNode, {"_id": v1["_id"]})
+    assert not v1
+
+    v1_v2 = graph_ops.get_edge(ExampleEdge, {"_id": v1_v2["_id"]})
+    assert not v1_v2
+
+    v1_v3 = graph_ops.get_edge(ExampleEdge, {"_id": v1_v3["_id"]})
+    assert not v1_v3
+
+    v2_v3 = graph_ops.get_edge(ExampleEdge, {"_id": v2_v3["_id"]})
+    assert v2_v3

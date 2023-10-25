@@ -100,6 +100,11 @@ def update_vertex(vertex: BaseVertex, storage_def=None) -> dict:
         raise DataOpsException(f"arango.exceptions.DocumentUpdateError: {e}")
 
 
+def delete_vertex(vertex_def: type[BaseVertex], id: str, storage_def=None) -> bool:
+    storage = resolve_vertex_storage(vertex_def, storage_def)
+    return storage.collection.delete({"_id": id})
+
+
 def get_vertex(
     vertex_def: type[BaseVertex], search: dict, storage_def=None
 ) -> dict | None:
