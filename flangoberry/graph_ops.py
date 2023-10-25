@@ -4,6 +4,7 @@ from flangoberry import db
 from .graph_defs import BaseVertex, BaseEdge
 from datetime import datetime, timezone
 from arango.exceptions import DocumentInsertError, DocumentUpdateError
+from strawberry import UNSET as STRAWBERRY_UNSET
 
 
 class DataOpsException(Exception):
@@ -87,8 +88,10 @@ def update_vertex(vertex: BaseVertex, storage_def=None) -> dict:
     if "created" in vertex:
         del vertex["created"]
     vertex["modified"] = datetime.now(timezone.utc).isoformat()
-    if "tags" in vertex and not vertex["tags"]:
-        vertex.pop("tags")
+    # Making use of the strawberry.UNSET value to remove optional fields that weren't set
+    unset_fields = [f for f, v in vertex.items() if v == STRAWBERRY_UNSET]
+    for field in unset_fields:
+        vertex.pop(field)
 
     storage = resolve_vertex_storage(vertex, storage_def)
     try:
