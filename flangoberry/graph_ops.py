@@ -168,6 +168,11 @@ def update_edge(edge: BaseEdge, storage_def=None) -> dict:
         raise DataOpsException(f"arango.exceptions.DocumentUpdateError: {e}")
 
 
+def delete_edge(edge_def: type[BaseEdge], id: str, storage_def=None) -> bool:
+    storage = resolve_edge_storage(edge_def, storage_def)
+    return storage.collection.delete({"_id": id})
+
+
 def _handle_get_edge_search_args(
     search: dict = None,
     frm: BaseVertex = None,
