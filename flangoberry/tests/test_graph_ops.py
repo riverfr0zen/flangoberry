@@ -432,6 +432,27 @@ def test_delete_vertex(tests_conn, cleanup):
     assert v2_v3
 
 
+def test_list_vertex_edges(tests_conn, cleanup):
+    v1 = graph_ops.create_vertex(ExampleNode(attr1="v1a1", attr2="v1a2"))
+    v2 = graph_ops.create_vertex(ExampleNode(attr1="v2a1", attr2="v2a2"))
+    v3 = graph_ops.create_vertex(ExampleNode(attr1="v3a1", attr2="v3a2"))
+    v4 = graph_ops.create_vertex(ExampleNode(attr1="v4a1", attr2="v4a2"))
+
+    v1_v2 = graph_ops.create_edge(ExampleEdge(frm=v1, to=v2, attr1="v1v2"))
+    v1_v3 = graph_ops.create_edge(ExampleEdge(frm=v1, to=v3, attr1="v1v3"))
+    v2_v3 = graph_ops.create_edge(ExampleEdge(frm=v2, to=v3, attr1="v2v3"))
+    v3_v4 = graph_ops.create_edge(ExampleEdge(frm=v3, to=v4, attr1="v3v4"))
+
+    cursor = graph_ops.list_vertex_edges(ExampleNode, v1["_id"], outbound_only=True)
+    assert cursor.count() == 2
+
+    cursor = graph_ops.list_vertex_edges(ExampleNode, v3["_id"], inbound_only=True)
+    assert cursor.count() == 2
+
+    cursor = graph_ops.list_vertex_edges(ExampleNode, v3["_id"])
+    assert cursor.count() == 3
+
+
 def test_delete_edge(tests_conn, cleanup):
     v1 = graph_ops.create_vertex(ExampleNode(attr1="v1a1", attr2="v1a2"))
     v2 = graph_ops.create_vertex(ExampleNode(attr1="v2a1", attr2="v2a2"))
@@ -441,7 +462,12 @@ def test_delete_edge(tests_conn, cleanup):
     v1_v3 = graph_ops.create_edge(ExampleEdge(frm=v1, to=v3, attr1="v1v3"))
     v2_v3 = graph_ops.create_edge(ExampleEdge(frm=v2, to=v3, attr1="v2v3"))
 
-    delete_ok = graph_ops.delete_edge(ExampleEdge, v1_v3["_id"])
+    v2 = graph_ops.get_vertex(ExampleNode, {"_id": v2["_id"]})
+    assert not v2["is_leaf"]
+
+    delete_ok = graph_ops.delete_edge(ExampleEdge, v2_v3["_id"])
     assert graph_ops.get_edge(ExampleEdge, {"_id": v1_v2["_id"]})
-    assert graph_ops.get_edge(ExampleEdge, {"_id": v2_v3["_id"]})
-    assert graph_ops.get_edge(ExampleEdge, {"_id": v1_v3["_id"]}) is None
+    assert graph_ops.get_edge(ExampleEdge, {"_id": v1_v3["_id"]})
+    assert graph_ops.get_edge(ExampleEdge, {"_id": v2_v3["_id"]}) is None
+    v2 = graph_ops.get_vertex(ExampleNode, {"_id": v2["_id"]})
+    assert v2["is_leaf"]

@@ -5,6 +5,7 @@ from .graph_defs import BaseVertex, BaseEdge
 from datetime import datetime, timezone
 from arango.exceptions import DocumentInsertError, DocumentUpdateError
 from strawberry import UNSET as STRAWBERRY_UNSET
+from arango.cursor import Cursor
 
 
 class DataOpsException(Exception):
@@ -168,11 +169,6 @@ def update_edge(edge: BaseEdge, storage_def=None) -> dict:
         raise DataOpsException(f"arango.exceptions.DocumentUpdateError: {e}")
 
 
-def delete_edge(edge_def: type[BaseEdge], id: str, storage_def=None) -> bool:
-    storage = resolve_edge_storage(edge_def, storage_def)
-    return storage.collection.delete({"_id": id})
-
-
 def _handle_get_edge_search_args(
     search: dict = None,
     frm: BaseVertex = None,
@@ -236,6 +232,63 @@ def get_or_create_edge(
         new_doc = _handle_get_edge_search_args(search, frm, to)
 
     return False, create_edge(edge_def(**new_doc), storage_def)
+
+
+def list_vertex_edges_by_id(
+    db,
+    graph_name: str,
+    vertex_id: str,
+    outbound_only: bool = False,
+    inbound_only: bool = False,
+) -> Cursor:
+    direction = "ANY"
+    if outbound_only:
+        direction = "OUTBOUND"
+    if inbound_only:
+        direction = "INBOUND"
+    bind_vars = {
+        "graph_name": graph_name,
+        "vertex_id": vertex_id,
+        # "direction": direction,
+    }
+
+    query = f"""
+        FOR v, e IN 1 {direction} @vertex_id
+        GRAPH @graph_name
+        SORT
+            e.modified DESC
+        RETURN {{vertex: v, edge: e}}
+    """
+
+    return db.aql.execute(query, bind_vars=bind_vars, count=True)
+
+
+def list_vertex_edges(
+    vertex_def: type[BaseVertex],
+    vertex_id: str,
+    outbound_only: bool = False,
+    inbound_only: bool = False,
+) -> Cursor:
+    """Returns the immediate (depth == 1) edges of the vertex"""
+    (db, graph, collection) = resolve_vertex_storage(vertex_def)
+    return list_vertex_edges_by_id(
+        db, graph.name, vertex_id, outbound_only, inbound_only
+    )
+
+
+def delete_edge(edge_def: type[BaseEdge], id: str, storage_def=None) -> bool:
+    storage = resolve_edge_storage(edge_def, storage_def)
+    res = storage.collection.delete({"_id": id}, return_old=True)
+    logger.debug(res)
+    if res:
+        from_vertex_id = res["old"]["_from"]
+        edges_cursor = list_vertex_edges_by_id(
+            storage.db, storage.graph.name, from_vertex_id, outbound_only=True
+        )
+        if edges_cursor.count() == 0:
+            res = storage.graph.update_vertex({"_id": from_vertex_id, "is_leaf": True})
+        return True
+    return False
 
 
 def get_collection_name_from_id(id: str):
