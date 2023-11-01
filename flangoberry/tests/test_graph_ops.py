@@ -445,11 +445,22 @@ def test_list_vertex_edges(tests_conn, cleanup):
 
     cursor = graph_ops.list_vertex_edges(ExampleNode, v1["_id"], outbound_only=True)
     assert cursor.count() == 2
+    for strand in cursor:
+        assert strand["direction"] == "outbound"
 
     cursor = graph_ops.list_vertex_edges(ExampleNode, v3["_id"], inbound_only=True)
     assert cursor.count() == 2
+    for strand in cursor:
+        assert strand["direction"] == "inbound"
 
     cursor = graph_ops.list_vertex_edges(ExampleNode, v3["_id"])
+    for strand in cursor:
+        if strand["vertex"]["_id"] == v1["_id"]:
+            assert strand["direction"] == "inbound"
+        if strand["vertex"]["_id"] == v2["_id"]:
+            assert strand["direction"] == "inbound"
+        if strand["vertex"]["_id"] == v4["_id"]:
+            assert strand["direction"] == "outbound"
     assert cursor.count() == 3
 
 

@@ -257,7 +257,11 @@ def list_vertex_edges_by_id(
         GRAPH @graph_name
         SORT
             e.modified DESC
-        RETURN {{vertex: v, edge: e}}
+        RETURN {{
+            vertex: v,
+            edge: e,
+            direction: e._to == v._id ? 'outbound' : 'inbound'
+        }}
     """
 
     return db.aql.execute(query, bind_vars=bind_vars, count=True)
@@ -279,7 +283,7 @@ def list_vertex_edges(
 def delete_edge(edge_def: type[BaseEdge], id: str, storage_def=None) -> bool:
     storage = resolve_edge_storage(edge_def, storage_def)
     res = storage.collection.delete({"_id": id}, return_old=True)
-    logger.debug(res)
+    # logger.debug(res)
     if res:
         from_vertex_id = res["old"]["_from"]
         edges_cursor = list_vertex_edges_by_id(
