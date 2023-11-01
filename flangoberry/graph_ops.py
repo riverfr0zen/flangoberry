@@ -249,7 +249,6 @@ def list_vertex_edges_by_id(
     bind_vars = {
         "graph_name": graph_name,
         "vertex_id": vertex_id,
-        # "direction": direction,
     }
 
     query = f"""
