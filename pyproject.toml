@@ -17,8 +17,8 @@ flask-cors = "^4.0.0"
 [tool.poetry.group.dev.dependencies]
 flake8 = "^7.3.0"
 coverage = "^7.2.5"
-pytest-cov = "^4.0.0"
-pytest = "^7.3.1"
+pytest-cov = "^7.0.0"
+pytest = "^8.4.2"
 black = "^25.9.0"
 safety = "^3.6.2"
 
