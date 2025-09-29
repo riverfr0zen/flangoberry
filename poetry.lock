@@ -781,6 +781,21 @@ files = [
 ]
 
 [[package]]
+name = "lia-web"
+version = "0.2.3"
+description = "A library for working with web frameworks"
+optional = false
+python-versions = ">=3.9"
+groups = ["main"]
+files = [
+    {file = "lia_web-0.2.3-py3-none-any.whl", hash = "sha256:237c779c943cd4341527fc0adfcc3d8068f992ee051f4ef059b8474ee087f641"},
+    {file = "lia_web-0.2.3.tar.gz", hash = "sha256:ccc9d24cdc200806ea96a20b22fb68f4759e6becdb901bd36024df7921e848d7"},
+]
+
+[package.dependencies]
+typing-extensions = ">=4.14.0"
+
+[[package]]
 name = "markdown-it-py"
 version = "4.0.0"
 description = "Python port of markdown-it. Markdown parsing, done right!"
@@ -1744,37 +1759,40 @@ files = [
 
 [[package]]
 name = "strawberry-graphql"
-version = "0.184.1"
+version = "0.282.0"
 description = "A library for creating GraphQL APIs"
 optional = false
-python-versions = ">=3.7,<4.0"
+python-versions = "<4.0,>=3.9"
 groups = ["main"]
 files = [
-    {file = "strawberry_graphql-0.184.1-py3-none-any.whl", hash = "sha256:a0232fad8a65ef45ebba915da347d4cb04fb457f0ff9af5c5fd9502851f30330"},
-    {file = "strawberry_graphql-0.184.1.tar.gz", hash = "sha256:d7bddabe48a177dc1b35ee808bb2496b5c2b403a492cd1ee945db94468d5d6c1"},
+    {file = "strawberry_graphql-0.282.0-py3-none-any.whl", hash = "sha256:6671cf90fd3630ae7d50aae2d8a06808ada6ce55d02ee01b7b7cba0026dfed18"},
+    {file = "strawberry_graphql-0.282.0.tar.gz", hash = "sha256:f15610e4944210c15f83be814bfcd6ac1024b4293c18c9f4eee8345639795d1c"},
 ]
 
 [package.dependencies]
-graphql-core = ">=3.2.0,<3.3.0"
-python-dateutil = ">=2.7.0,<3.0.0"
-typing_extensions = ">=4.0.0,<5.0.0"
+graphql-core = ">=3.2.0,<3.4.0"
+lia-web = ">=0.2.1"
+packaging = ">=23"
+python-dateutil = ">=2.7,<3.0"
+typing-extensions = ">=4.5.0"
 
 [package.extras]
-aiohttp = ["aiohttp (>=3.7.4.post0,<4.0.0)"]
-asgi = ["python-multipart (>=0.0.5,<0.0.7)", "starlette (>=0.18.0)"]
+aiohttp = ["aiohttp (>=3.7.4.post0,<4)"]
+asgi = ["python-multipart (>=0.0.7)", "starlette (>=0.18.0)"]
 chalice = ["chalice (>=1.22,<2.0)"]
 channels = ["asgiref (>=3.2,<4.0)", "channels (>=3.0.5)"]
-cli = ["libcst (>=0.4.7)", "pygments (>=2.3,<3.0)", "rich (>=12.0.0)", "typer (>=0.7.0)"]
-debug = ["libcst (>=0.4.7)", "rich (>=12.0.0)"]
-debug-server = ["libcst (>=0.4.7)", "pygments (>=2.3,<3.0)", "python-multipart (>=0.0.5,<0.0.7)", "rich (>=12.0.0)", "starlette (>=0.18.0)", "typer (>=0.7.0)", "uvicorn (>=0.11.6,<0.22.0)"]
+cli = ["libcst", "pygments (>=2.3,<3.0)", "rich (>=12.0.0)", "typer (>=0.7.0)"]
+debug = ["libcst", "rich (>=12.0.0)"]
+debug-server = ["libcst", "pygments (>=2.3,<3.0)", "python-multipart (>=0.0.7)", "rich (>=12.0.0)", "starlette (>=0.18.0)", "typer (>=0.7.0)", "uvicorn (>=0.11.6)", "websockets (>=15.0.1,<16)"]
 django = ["Django (>=3.2)", "asgiref (>=3.2,<4.0)"]
-fastapi = ["fastapi (>=0.65.2)", "python-multipart (>=0.0.5,<0.0.7)"]
+fastapi = ["fastapi (>=0.65.2)", "python-multipart (>=0.0.7)"]
 flask = ["flask (>=1.1)"]
+litestar = ["litestar (>=2) ; python_version ~= \"3.10\""]
 opentelemetry = ["opentelemetry-api (<2)", "opentelemetry-sdk (<2)"]
-pydantic = ["pydantic (<2)"]
+pydantic = ["pydantic (>1.6.1)"]
 pyinstrument = ["pyinstrument (>=4.0.0)"]
+quart = ["quart (>=0.19.3)"]
 sanic = ["sanic (>=20.12.2)"]
-starlite = ["starlite (>=1.48.0) ; python_version >= \"3.8\""]
 
 [[package]]
 name = "tenacity"
@@ -1930,4 +1948,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.11.2"
-content-hash = "403f672b1e50d0d791fb3a686184e51a5d404bd47f5e42bbf9e4565ac965a837"
+content-hash = "64c70694e0cde82b0b49c3732a6abe3155ec8c23efe0781d4da2e83be22ce33c"

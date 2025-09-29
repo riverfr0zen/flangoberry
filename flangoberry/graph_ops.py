@@ -38,7 +38,8 @@ def resolve_vertex_storage(vertex: BaseVertex | type[BaseVertex], storage_def=No
     if persistent_indexes := storage_def.get("persistent_indexes", None):
         for p_index in persistent_indexes:
             p_index["in_background"] = True
-            coll.add_persistent_index(**p_index)
+            p_index["type"] = "persistent"
+            coll.add_index(p_index)
 
     return VertexStorage(dbase, graph, coll)
 

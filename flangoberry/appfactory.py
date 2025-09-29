@@ -3,6 +3,7 @@ from strawberry.flask.views import GraphQLView
 from flangoberry.tests.schema import schema
 from flangoberry.db import get_connection
 from flask_cors import CORS
+
 # from flangoberry import settings
 
 
@@ -42,7 +43,7 @@ def create_app(settings_file="default_settings.py", schema=schema, test_config=N
         view_func=GraphQLView.as_view(
             "graphql",
             schema=schema,
-            graphiql=app.config["SHOW_GRAPHIQL"],
+            graphql_ide=app.config["SHOW_GRAPHIQL"],
         ),
     )
 
