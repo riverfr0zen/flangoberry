@@ -1308,27 +1308,27 @@ testing = ["process-tests", "pytest-xdist", "virtualenv"]
 
 [[package]]
 name = "python-arango"
-version = "7.9.1"
+version = "8.2.2"
 description = "Python Driver for ArangoDB"
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "python-arango-7.9.1.tar.gz", hash = "sha256:18f7d365fb6cf45778fa73b559e3865d0a1c00081de65ef00ba238db52e374ab"},
-    {file = "python_arango-7.9.1-py3-none-any.whl", hash = "sha256:23ec7b3aad774db5f99df20f6a1036385c85eb5c9864e47628bc622ea812f2f8"},
+    {file = "python_arango-8.2.2-py3-none-any.whl", hash = "sha256:987bb8b6faadaeb0f53b35298114773a86c3416da05863a389c44a526fd32c71"},
+    {file = "python_arango-8.2.2.tar.gz", hash = "sha256:395a975523fc748af7623c71e2d0d3cb544252698de01a284c6036159ea85397"},
 ]
 
 [package.dependencies]
-importlib-metadata = ">=4.7.1"
+importlib_metadata = ">=4.7.1"
 packaging = ">=23.1"
 PyJWT = "*"
 requests = "*"
-requests-toolbelt = "*"
+requests_toolbelt = "*"
 setuptools = ">=42"
 urllib3 = ">=1.26.0"
 
 [package.extras]
-dev = ["black (>=22.3.0)", "flake8 (>=4.0.1)", "isort (>=5.10.1)", "mock", "mypy (>=0.942)", "pre-commit (>=2.17.0)", "pytest (>=7.1.1)", "pytest-cov (>=3.0.0)", "sphinx", "sphinx-rtd-theme", "types-pkg-resources", "types-requests", "types-setuptools"]
+dev = ["black (>=22.3.0)", "flake8 (>=4.0.1)", "isort (>=5.10.1)", "mock", "mypy (>=0.942)", "pre-commit (>=2.17.0)", "pytest (>=7.1.1)", "pytest-cov (>=3.0.0)", "sphinx", "sphinx_rtd_theme", "types-requests", "types-setuptools"]
 
 [[package]]
 name = "python-dateutil"
@@ -1928,4 +1928,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.11.2"
-content-hash = "54b6c88db0a7db1967e71e255795bd5179707f4ea43eb7739d4d8ccf4179c5d2"
+content-hash = "4aa7b8bf62fc2aa0c863afdb9dc595f21534630ffef7180749a5741515f2f138"
